@@ -6,8 +6,10 @@
 ElevatorController = {
 	//Properties
 	cars: [],
-	floors: 1,
+	floors: [],
+	topFloor: 1,
 	latestRequestedCarIndex: 0;
+
 	//Methods
 	init: function(numberOfCars, numberOfFloors) {
 		this.cars = [];
@@ -37,19 +39,40 @@ ElevatorController = {
 		closestCarIndex = 0;
 		closetCar = this.cars[closestCarIndex];
 		for (var i=0; i<this.cars.length; i++)  {
-			//Math.abs();
 			if (this.cars[i].currentFloor == floor && this.cars[i].occupied == false) {
+				//do this first if possible
 				closetCar = this.cars[i];
 				break;
 			}
-			if Math.abs( (this.cars[i].currentFloor - floor) < (closetCar.currentFloor - floor) ) {
+			if (this.cars[i].occupied == true && this.cars[i].directionMoving == direction) {
+				//occupied and moving in the desired direction takes priority next
 				closetCar = this.cars[i];
+				break;	
+			}
+			else {
+				if Math.abs((this.cars[i].currentFloor - floor)) < Math.abs((closetCar.currentFloor - floor)) {
+					closetCar = this.cars[i];
+				}
 			}
 
 		}
 		closetCar.goToFloor(floor, direction);
-	}
+	},
+	showCarOnFloor: function(floor) {
 
+	},
+	cancelDirectionLight: function(floor) {
+
+	},
+
+};
+
+Floor = {
+	upLightIsOn: false,
+	downLightIsOn: false,
+	init: function() {
+		return this;
+	}
 };
 
 Car = {
@@ -64,8 +87,8 @@ Car = {
 		//return a car object
 		//NOTE: if this singleton issue is present owl.deepCopy addresses it
 	},
-	reportFloor: function() {
-
+	reportAtFloor: function() {
+		ElevatorController.
 	},
 	reportOpening: function() {
 
@@ -78,6 +101,7 @@ Car = {
 		else if (floor < 1) { this.requestedFloor = 1; }
 		else { this.requestedFloor = floor; }
 		while (this.requestedFloor != this.currentFloor) {
+			// implement a timer to make this change not all at once
 			if (this.requestedFloor > this.currentFloor) { this.currentFloor++; }
 			else { this.currentFloor--; }
 		}
