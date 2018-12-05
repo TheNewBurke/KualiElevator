@@ -1,6 +1,7 @@
 
 // Elevator will have a controller that will construct and control the simulation
 
+import("./owl-deepcopy");
 
 ElevatorController = {
 	//Properties
@@ -16,11 +17,16 @@ ElevatorController = {
 		}
 	},
 	createCar: function() {
-		return Car.init();
+		return deepCopy(Car);
 	},
 };
 
 Car = {
+	currentFloor: 1,
+	trips: 0,
+	maintenanceMode: false,
+	occupied: false,
+
 	init: function() {
 
 		//return a car object

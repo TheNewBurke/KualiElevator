@@ -20,6 +20,7 @@
     "webpack-cli": "^3.1.2"
   },
   "dependencies": {
-    "http-server": "^0.11.1"
+    "http-server": "^0.11.1",
+    "owl-deepcopy": "0.0.6"
   }
 }
