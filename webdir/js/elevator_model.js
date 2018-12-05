@@ -48,31 +48,35 @@ ElevatorController = {
 		closestCarIndex = 0;
 		closetCar = this.cars[closestCarIndex];
 		for (var i=0; i<this.cars.length; i++)  {
-			if (this.cars[i].currentFloor == floor && this.cars[i].occupied == false) {
-				//do this first if possible
-				closetCar = this.cars[i];
-				break;
-			}
-			if (this.cars[i].occupied == true && this.cars[i].directionMoving == direction) {
-				//occupied and moving in the desired direction takes priority next
-				closetCar = this.cars[i];
-				break;	
-			}
-			else {
-				if Math.abs((this.cars[i].currentFloor - floor)) < Math.abs((closetCar.currentFloor - floor)) {
+			if (this.cars[i].maintenanceMode == false) {
+				if (this.cars[i].currentFloor == floor && this.cars[i].occupied == false) {
+					//do this first if possible
 					closetCar = this.cars[i];
+					break;
+				}
+				if (this.cars[i].occupied == true && this.cars[i].directionMoving == direction) {
+					//occupied and moving in the desired direction takes priority next
+					closetCar = this.cars[i];
+					break;	
+				}
+				else {
+					if Math.abs((this.cars[i].currentFloor - floor)) < Math.abs((closetCar.currentFloor - floor)) {
+						closetCar = this.cars[i];
+					}
 				}
 			}
-
 		}
 		closetCar.goToFloor(floor, direction);
 	},
-	showCarOnFloor: function(floor) {
-
+	ding: function(floor) {
+		//this.ding = new Audio('./audio/ding.mp3');
 	},
 	cancelDirectionLight: function(floor) {
 
 	},
+	requestMaintenance: function(car) {
+		//after a timer... via SetInterval  ///setInterval(this.doThing.bind(this), 2000);
+	}
 
 };
 
@@ -98,15 +102,23 @@ Car = {
 		//NOTE: if this singleton issue is present owl.deepCopy addresses it
 	},
 	reportAtFloor: function() {
+		this.reportOpening();
+		floorsLeftToVisit = [];
 		ElevatorController.cancelDirectionLight(this.directionMoving);
 		for (var i=0; i<this.requestedFloors.length; i++)  {
-			if (this.requestedFloors[i] ) {
-				
-			}
+			if (this.requestedFloors[i] != this.currentFloor) { floorsLeftToVisit.push(this.requestedFloors[i]); }
 		}
+		if (this.requestedFloors.length == 0) { this.occupied = false; }
+		this.reportClosing();
+		this.trips++;
+		if (this.trips == 100) {
+			this.maintenanceMode = true;
+			ElevatorController.requestMaintenance(this);
+		}
+		//reset direction for next floor in queue as needed
 	},
 	reportOpening: function() {
-		
+		ElevatorController.ding(this.currentFloor);
 	},
 	reportClosing: function() {
 
