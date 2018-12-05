@@ -7,6 +7,7 @@ ElevatorController = {
 	//Properties
 	cars: [],
 	floors: 1,
+	latestRequestedCarIndex: 0;
 	//Methods
 	init: function(numberOfCars, numberOfFloors) {
 		this.cars = [];
@@ -25,10 +26,16 @@ ElevatorController = {
 		return this.floors;
 	},
 	//Car calling methods
-	requestCar: function() {
+	externalRequestCarToFloor: function(floor) {
+		//this function will request a car from the list of cars that is closest to floor, with other considerations
+		//do calc on which car, then have that car move
+		closestCarIndex = 0;
+		for (var i=0; i<this.cars.length; i++)  {
+			this.cars[i];
+		}
+
 
 	},
-
 
 
 };
@@ -38,7 +45,7 @@ Car = {
 	trips: 0,
 	maintenanceMode: false,
 	occupied: false,
-
+	requestedFloor: null,
 	init: function() {
 		return this;
 		//return a car object
@@ -53,11 +60,24 @@ Car = {
 	reportClosing: function() {
 
 	},
+	goToFloor: function(floor) {
+		if (floor > ElevatorController.getTopFloor()) { this.requestedFloor = ElevatorController.getTopFloor(); }
+		else if (floor < 1) { this.requestedFloor = 1; }
+		else { this.requestedFloor = floor; }
+		while (this.requestedFloor != this.currentFloor) {
+			if (this.requestedFloor > this.currentFloor) { this.currentFloor++; }
+			else { this.currentFloor--; }
+		}
+	},
 	setCurrentFloor: function(floor) {
 		if (floor > ElevatorController.getTopFloor()) { this.currentFloor = ElevatorController.getTopFloor(); }
-		if (floor < 1) { this.currentFloor = 1; }
-		this.currentFloor = floor;
+		else if (floor < 1) { this.currentFloor = 1; }
+		else { this.currentFloor = floor; }
 	},
+	internalRequestCarToFloor: function(floor) {
+		this.occupied = true;
+		this.goToFloor(floor);
+	}
 
 };
 
