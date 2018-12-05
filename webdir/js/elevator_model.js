@@ -32,7 +32,7 @@ ElevatorController = {
 		//return deepCopy(Car);
 	},
 	getTopFloor: function() {
-		return this.floors;
+		return this.topFloor;
 	},
 	//Car calling methods
 	pushUpButton: function(floor) {
@@ -64,6 +64,8 @@ ElevatorController = {
 						closetCar = this.cars[i];
 					}
 				}
+			}else {
+				// when maintenanceMode is true, a car is unavailable for service until returned to normal status
 			}
 		}
 		closetCar.goToFloor(floor, direction);
@@ -72,10 +74,11 @@ ElevatorController = {
 		//this.ding = new Audio('./audio/ding.mp3');
 	},
 	cancelDirectionLight: function(floor) {
-
+		//this would set the upLightIsOn or upLightIsOff on a particular floor to false
 	},
 	requestMaintenance: function(car) {
 		//after a timer... via SetInterval  ///setInterval(this.doThing.bind(this), 2000);
+		//set car.maintenanceMode back to false
 	}
 
 };
@@ -130,6 +133,7 @@ Car = {
 		else { this.requestedFloors.push(floor); }
 		while (this.requestedFloor != this.currentFloor) {
 			// implement a timer to make this change not all at once
+			// via setInterval(this.doThing.bind(this), 2000);
 			if (this.requestedFloor > this.currentFloor) { this.currentFloor++; }
 			else { this.currentFloor--; }
 		}
@@ -146,15 +150,9 @@ Car = {
 		this.occupied = true;
 		this.goToFloor(floor);
 	}
-
 };
 
 ElevatorController.init(2,2);
 
 
-
-
-
-let d = new Date();
-document.body.innerHTML = "<h1>Today's date is " + d + "</h1>"
 
