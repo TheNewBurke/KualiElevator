@@ -26,17 +26,29 @@ ElevatorController = {
 		return this.floors;
 	},
 	//Car calling methods
-	externalRequestCarToFloor: function(floor) {
-		//this function will request a car from the list of cars that is closest to floor, with other considerations
-		//do calc on which car, then have that car move
-		closestCarIndex = 0;
-		for (var i=0; i<this.cars.length; i++)  {
-			this.cars[i];
-		}
-
-
+	pushUpButton: function(floor) {
+		this.externalRequestCarToFloor(floor, 1);
 	},
+	pushDownButton: function(floor) {
+		this.externalRequestCarToFloor(floor, -1);
+	},
+	//when a button from outside the car is called
+	externalRequestCarToFloor: function(floor, direction) {
+		closestCarIndex = 0;
+		closetCar = this.cars[closestCarIndex];
+		for (var i=0; i<this.cars.length; i++)  {
+			//Math.abs();
+			if (this.cars[i].currentFloor == floor && this.cars[i].occupied == false) {
+				closetCar = this.cars[i];
+				break;
+			}
+			if Math.abs( (this.cars[i].currentFloor - floor) < (closetCar.currentFloor - floor) ) {
+				closetCar = this.cars[i];
+			}
 
+		}
+		closetCar.goToFloor(floor, direction);
+	}
 
 };
 
@@ -46,6 +58,7 @@ Car = {
 	maintenanceMode: false,
 	occupied: false,
 	requestedFloor: null,
+	directionMoving: null, // 1 = up, -1 = down
 	init: function() {
 		return this;
 		//return a car object
@@ -60,7 +73,7 @@ Car = {
 	reportClosing: function() {
 
 	},
-	goToFloor: function(floor) {
+	goToFloor: function(floor, direction) {
 		if (floor > ElevatorController.getTopFloor()) { this.requestedFloor = ElevatorController.getTopFloor(); }
 		else if (floor < 1) { this.requestedFloor = 1; }
 		else { this.requestedFloor = floor; }
