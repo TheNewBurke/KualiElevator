@@ -13,14 +13,21 @@ ElevatorController = {
 	//Methods
 	init: function(numberOfCars, numberOfFloors) {
 		this.cars = [];
-		if (numberOfFloors == null || < 1) { this.floors = 1; }
-		else { this.floors = numberOfFloors; }
-		
+		if (numberOfFloors == null || < 1) { this.topFloor = 1; }
+		else { this.topFloor = numberOfFloors; }
+		for (var i=0; i<this.topFloor; i++)  {
+			this.floors.push(this.addFloor());
+		}
+
 		for (var i=0; i<numberOfCars; i++)  {
-			this.cars.push(this.createCar());
+			this.cars.push(this.addCar());
 		}
 	},
-	createCar: function() {
+	addFloor: function() {
+		return Floor.init();
+		//return deepCopy(Floor);
+	},
+	addCar: function() {
 		return Car.init();
 		//return deepCopy(Car);
 	},
@@ -29,9 +36,11 @@ ElevatorController = {
 	},
 	//Car calling methods
 	pushUpButton: function(floor) {
+		this.activateDirectionLight(floor, 1);
 		this.externalRequestCarToFloor(floor, 1);
 	},
 	pushDownButton: function(floor) {
+		this.activateDirectionLight(floor, -1);
 		this.externalRequestCarToFloor(floor, -1);
 	},
 	//when a button from outside the car is called
@@ -80,30 +89,40 @@ Car = {
 	trips: 0,
 	maintenanceMode: false,
 	occupied: false,
-	requestedFloor: null,
+	requestedFloors: [],
 	directionMoving: null, // 1 = up, -1 = down
+
 	init: function() {
 		return this;
 		//return a car object
 		//NOTE: if this singleton issue is present owl.deepCopy addresses it
 	},
 	reportAtFloor: function() {
-		ElevatorController.
+		ElevatorController.cancelDirectionLight(this.directionMoving);
+		for (var i=0; i<this.requestedFloors.length; i++)  {
+			if (this.requestedFloors[i] ) {
+				
+			}
+		}
 	},
 	reportOpening: function() {
-
+		
 	},
 	reportClosing: function() {
 
 	},
 	goToFloor: function(floor, direction) {
+		this.directionMoving = direction;
 		if (floor > ElevatorController.getTopFloor()) { this.requestedFloor = ElevatorController.getTopFloor(); }
 		else if (floor < 1) { this.requestedFloor = 1; }
-		else { this.requestedFloor = floor; }
+		else { this.requestedFloors.push(floor); }
 		while (this.requestedFloor != this.currentFloor) {
 			// implement a timer to make this change not all at once
 			if (this.requestedFloor > this.currentFloor) { this.currentFloor++; }
 			else { this.currentFloor--; }
+		}
+		if (this.requestedFloor == this.currentFloor) {
+			this.reportAtFloor();
 		}
 	},
 	setCurrentFloor: function(floor) {
